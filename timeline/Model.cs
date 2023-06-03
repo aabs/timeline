@@ -20,6 +20,11 @@ public class TimeLineContext : DbContext
         DbPath = System.IO.Path.Join(path, "timeline.db");
     }
 
+    public IQueryable<Event> AllEvents()
+    {
+        return from e in Events
+            select e;
+    }
     // The following configures EF to create a Sqlite database file in the
     // special "local" folder for your platform.
     protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -32,8 +37,8 @@ public class Event
     public string Title { get; set; }
     public DateOnly DateOfEvent { get; set; }
     public TimeOnly? TimeOfEvent { get; set; }
-    public Location LocationOfEvent { get; set; }
-    private DateTimeOffset Created { get; set; }
+    public Location? LocationOfEvent { get; set; }
+    public DateTimeOffset Created { get; set; }
 }
 
 public class Location
