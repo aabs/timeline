@@ -1,7 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using System.CommandLine;
-using System.ComponentModel;
+﻿using System.CommandLine;
 using timeline;
 
 public static class Program
@@ -12,7 +9,7 @@ public static class Program
 
         var titleOption = new Option<string>(name: "--title", description: "A short description of the event");
         var dateOption = new Option<DateOnly>(name: "--date", description: "The day the event happened");
-        var timeOption = new Option<TimeOnly>(name: "--time", description: "The time the event happened");
+        var timeOption = new Option<TimeOnly>(name: "--time", description: "The time the event happened", getDefaultValue: () => new TimeOnly(12, 0));
         var idOption = new Option<int>(name: "--id", description: "The ID of the event");
 
         var addCommand = new Command("add", "Add an event");
@@ -36,8 +33,14 @@ public static class Program
 
     private static void AddEvent(string title, DateOnly dateOfEvent, TimeOnly timeOfEvent)
     {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            Console.Error.WriteLine("Error: Cannot have empty title");
+            return;
+        }
         using var db = new TimeLineContext();
-        db.Add(new Event {Title = title, DateOfEvent = dateOfEvent, TimeOfEvent = timeOfEvent, Created = DateTimeOffset.Now});
+        var newEvent = new Event(title, dateOfEvent, timeOfEvent);
+        db.Add(newEvent);
         db.SaveChanges();
         Console.WriteLine("Added event");
         ListEvents();
@@ -56,9 +59,12 @@ public static class Program
     {
         using var db = new TimeLineContext();
         var @event = db.Events.Find(eventId);
-        db.Remove(@event);
-        db.SaveChanges();
-        Console.WriteLine("Event Removed");
+        if (@event is not null)
+        {
+            db.Remove(@event);
+            db.SaveChanges();
+            Console.WriteLine("Event Removed");
+        }
         ListEvents();
     }
 }

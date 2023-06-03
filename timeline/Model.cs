@@ -33,18 +33,35 @@ public class TimeLineContext : DbContext
 
 public class Event
 {
+    public Event(string title, DateOnly dateOfEvent, TimeOnly timeOfEvent)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            throw new ArgumentException("Invalid title");
+        }
+        Title = title;
+        DateOfEvent = dateOfEvent;
+        TimeOfEvent = timeOfEvent;
+        Created = DateTimeOffset.Now;
+    }
+
     public int EventId { get; set; }
     public string Title { get; set; }
     public DateOnly DateOfEvent { get; set; }
-    public TimeOnly? TimeOfEvent { get; set; }
+    public TimeOnly TimeOfEvent { get; set; }
     public Location? LocationOfEvent { get; set; }
     public DateTimeOffset Created { get; set; }
 }
 
 public class Location
 {
+    public Location(string nameOfLocation)
+    {
+        NameOfLocation = nameOfLocation;
+    }
+
     public int LocationId { get; set; }
     public string NameOfLocation { get; set; }
-    public decimal Latitude { get; set; }
-    public decimal Longitude { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
 } 
