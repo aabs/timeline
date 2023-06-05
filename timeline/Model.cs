@@ -11,13 +11,14 @@ public class TimeLineContext : DbContext
     public DbSet<Event> Events { get; set; }
     public DbSet<Location> Locations { get; set; }
 
-    public string DbPath { get; }
+    public string DbPath { get; set; }
 
     public TimeLineContext()
     {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
-        DbPath = System.IO.Path.Join(path, "timeline.db");
+        // var folder = Environment.SpecialFolder.LocalApplicationData;
+        // var path = Environment.GetFolderPath(folder);
+        // DbPath = System.IO.Path.Join(path, "timeline.db");
+        DbPath = "timeline.db";
     }
 
     public IQueryable<Event> AllEvents()
